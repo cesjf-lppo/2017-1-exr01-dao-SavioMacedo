@@ -9,6 +9,10 @@ import DAO.PedidoDAO;
 import Model.Pedido;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author alunoces
  */
-@WebServlet(name = "PedidosCadastrarServlet", urlPatterns = {"/Pedido/Cadastrar"})
-public class PedidosCadastrarServlet extends HttpServlet
+@WebServlet(name = "PedidosListarServlet", urlPatterns = {"/Pedido/Listar"})
+public class PedidosListarServlet extends HttpServlet
 {
 
     
@@ -35,9 +39,24 @@ public class PedidosCadastrarServlet extends HttpServlet
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException
     {
+        List<Pedido> pedidos;
+
+        try
+        {
+           PedidoDAO dao = new PedidoDAO();
+            pedidos = dao.listAll();
+        }
+        catch (Exception ex)
+        {
+            Logger.getLogger(PedidosListarServlet.class.getName()).log(Level.SEVERE, null, ex);
+            pedidos = new ArrayList<>();
+            request.setAttribute("mensagem", ex.getLocalizedMessage());
+        }
+        
+        request.setAttribute("pedidos", pedidos);
+        request.getRequestDispatcher("/WEB-INF/lista-pedidos.jsp").forward(request, response);
         request.getRequestDispatcher("/WEB-INF/criar-pedido.jsp").forward(request, response);
     }
 
@@ -60,15 +79,19 @@ public class PedidosCadastrarServlet extends HttpServlet
         novoPedido.setValor(Float.parseFloat(request.getParameter("valor")));
         
         
-        try {PedidoDAO dao = new PedidoDAO();
+        try
+        {
+            PedidoDAO dao = new PedidoDAO();
             dao.cria(novoPedido);
-        } catch (Exception ex) {
+        } 
+        catch (Exception ex) 
+        {
             request.setAttribute("mensagem", ex);
             request.getRequestDispatcher("/WEB-INF/criar-pedido.jsp").forward(request, response);
             return;
         }
         
-        response.sendRedirect("Listar");
+        response.sendRedirect("contatos.html");
     }
 
     /**
