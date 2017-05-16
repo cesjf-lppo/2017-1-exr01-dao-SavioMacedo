@@ -42,11 +42,13 @@ public class PedidosListarServlet extends HttpServlet
     protected void doGet(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException
     {
         List<Pedido> pedidos;
+        List<Integer> listaPedidos = null;
 
         try
         {
            PedidoDAO dao = new PedidoDAO();
             pedidos = dao.listAll();
+            listaPedidos = dao.listarPedidos();
         }
         catch (Exception ex)
         {
@@ -55,6 +57,7 @@ public class PedidosListarServlet extends HttpServlet
             request.setAttribute("mensagem", ex.getLocalizedMessage());
         }
         
+        request.setAttribute("lista", listaPedidos);
         request.setAttribute("pedidos", pedidos);
         request.getRequestDispatcher("/WEB-INF/lista-pedidos.jsp").forward(request, response);
         request.getRequestDispatcher("/WEB-INF/criar-pedido.jsp").forward(request, response);

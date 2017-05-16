@@ -19,6 +19,14 @@
                 <th>Valor</th>
                 <th>Nome</th>
                 <th>Data e Hora</th>
+                <th>
+                    <select id="selecionar-pedido">
+                        <option value="#">Selecione um Pedido para Detalhar</option>
+                        <c:forEach var="lista" items="${lista}">
+                            <option value="${lista.pedido}">${lista.pedido}</option>
+                        </c:forEach>
+                    </select>
+                </th>
                 </tr>
             </thead>    
             <tbody>

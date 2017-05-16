@@ -8,28 +8,33 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.util.Pair;
 
 public class PedidoDAO
 {
     private PreparedStatement opListar;
     private PreparedStatement opNovo;
     private PreparedStatement opAtualizar;
+    private PreparedStatement opDistinto;
     
     public PedidoDAO() throws Exception
     {
         Connection conexao = ConnectionFactory.createConnection();
         opListar = conexao.prepareStatement("SELECT * FROM pedido");
+        opDistinto = conexao.prepareStatement("select distinct pedido from pedido");
         opNovo = conexao.prepareStatement("INSERT INTO pedido(nome, pedido, dono, valor) VALUES (?,?,?,?)");
         opAtualizar = conexao.prepareStatement("UPDATE pedido set pedido = ?, dono = ?, valor = ?, nome = ? WHERE id = ?");
     }
 
     public List<Pedido> listAll() throws Exception
     {
-        try {
+        try
+        {
             List<Pedido> pedidos = new ArrayList<>();
 
             ResultSet resultado = opListar.executeQuery();
-            while (resultado.next()) {
+            while (resultado.next())
+            {
                 Pedido novoPedido = new Pedido();
                 novoPedido.setId(resultado.getLong("id"));
                 novoPedido.setPedido(resultado.getInt("pedido"));
@@ -41,7 +46,30 @@ public class PedidoDAO
             }
 
             return pedidos;
-        } catch (SQLException ex) {
+        }
+        catch (SQLException ex)
+        {
+            throw new Exception("Erro ao listar os pedidos no banco!", ex);
+        }
+    }
+    
+    public List<Integer> listarPedidos() throws Exception
+    {
+        try
+        {
+            List<Integer> pedidos = new ArrayList<>();
+
+            ResultSet resultado = opDistinto.executeQuery();
+            while (resultado.next())
+            {
+                int pedido = resultado.getInt("pedido");
+                pedidos.add(pedido);
+            }
+
+            return pedidos;
+        }
+        catch (SQLException ex)
+        {
             throw new Exception("Erro ao listar os pedidos no banco!", ex);
         }
     }
