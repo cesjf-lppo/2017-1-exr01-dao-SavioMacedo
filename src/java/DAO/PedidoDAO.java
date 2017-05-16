@@ -18,36 +18,31 @@ public class PedidoDAO
     public PedidoDAO() throws Exception
     {
         Connection conexao = ConnectionFactory.createConnection();
-        opListar = conexao.prepareStatement("SELECT * FROM pedidos");
-        opNovo = conexao.prepareStatement("INSERT INTO pedidos(nome, pedido, dono, valor) VALUES (?,?,?,?)");
-        opAtualizar = conexao.prepareStatement("UPDATE pedidos set pedido = ?, dono = ?, valor = ?, nome = ? WHERE id = ?");
+        opListar = conexao.prepareStatement("SELECT * FROM pedido");
+        opNovo = conexao.prepareStatement("INSERT INTO pedido(nome, pedido, dono, valor) VALUES (?,?,?,?)");
+        opAtualizar = conexao.prepareStatement("UPDATE pedido set pedido = ?, dono = ?, valor = ?, nome = ? WHERE id = ?");
     }
 
     public List<Pedido> listAll() throws Exception
     {
-        try
-        {
-            List<Pedido> contatos = new ArrayList<>();
-            Connection conexao = ConnectionFactory.createConnection();
-            Statement operacao = conexao.createStatement();
-            ResultSet resultado = operacao.executeQuery("SELECT * FROM contato");
-            while (resultado.next())
-            {
+        try {
+            List<Pedido> pedidos = new ArrayList<>();
+
+            ResultSet resultado = opListar.executeQuery();
+            while (resultado.next()) {
                 Pedido novoPedido = new Pedido();
                 novoPedido.setId(resultado.getLong("id"));
+                novoPedido.setPedido(resultado.getInt("pedido"));
+                novoPedido.setDono(resultado.getString("dono"));
+                novoPedido.setValor(resultado.getFloat("valor"));
                 novoPedido.setNome(resultado.getString("nome"));
-                contatos.add(novoPedido);
+                novoPedido.setAtualizacao(resultado.getDate("atualizacao"));
+                pedidos.add(novoPedido);
             }
 
-            return contatos;
-        }
-        catch (ClassNotFoundException ex)
-        {
-            throw new Exception("Driver não encontrado!", ex);
-        }
-        catch (SQLException ex)
-        {
-            throw new Exception("Erro ao listar os contatos no banco!", ex);
+            return pedidos;
+        } catch (SQLException ex) {
+            throw new Exception("Erro ao listar os pedidos no banco!", ex);
         }
     }
     
