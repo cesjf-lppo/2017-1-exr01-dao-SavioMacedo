@@ -43,13 +43,26 @@ public class PedidosListarServlet extends HttpServlet
     {
         List<Pedido> pedidos;
         List<Integer> listaPedidos = null;
+        
+        long pedido = 0;
 
         try
         {
+            pedido = Integer.parseInt(request.getParameter("pedido"));
+        }
+        catch (NumberFormatException ex)
+        {    }
+        
+        try
+        {
            PedidoDAO dao = new PedidoDAO();
-            pedidos = dao.listAll();
+           if(pedido != 0)
+               pedidos = dao.listarPedido(pedido);
+           else
+                pedidos = dao.listAll();
             listaPedidos = dao.listarPedidos();
         }
+        
         catch (Exception ex)
         {
             Logger.getLogger(PedidosListarServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -60,7 +73,6 @@ public class PedidosListarServlet extends HttpServlet
         request.setAttribute("lista", listaPedidos);
         request.setAttribute("pedidos", pedidos);
         request.getRequestDispatcher("/WEB-INF/lista-pedidos.jsp").forward(request, response);
-        request.getRequestDispatcher("/WEB-INF/criar-pedido.jsp").forward(request, response);
     }
 
     /**

@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<jsp:useBean id="valorTotal" class="Long"></jsp:useBean>
+    <jsp:setProperty name="valorTotal" value="0" ></jsp:setProperty>
 <!DOCTYPE html>
 <html>
     <head>
@@ -20,10 +22,10 @@
                 <th>Nome</th>
                 <th>Data e Hora</th>
                 <th>
-                    <select id="selecionar-pedido">
+                    <select onchange="listarPedido();" id="selecionar-pedido">
                         <option value="#">Selecione um Pedido para Detalhar</option>
                         <c:forEach var="lista" items="${lista}">
-                            <option value="${lista.pedido}">${lista.pedido}</option>
+                            <option value="${lista}">${lista}</option>
                         </c:forEach>
                     </select>
                 </th>
@@ -32,14 +34,25 @@
             <tbody>
                 <c:forEach var="pedidos" items="${pedidos}">    
                 <tr>
-                    <td><a href="detalhes.html?id=${pedidos.id}">${pedidos.id}</a></td>
+                    <td>${pedidos.id}</td>
                     <td>${pedidos.pedido}</td>
                     <td>${pedidos.dono}</td>
                     <td>${pedidos.valor}</td>
                     <td>${pedidos.nome}</td>
                     <td>${pedidos.atualizacao}</td>
+                    ${valorTotal += pedidos.valor}
                 </tr>
                 </c:forEach>
+            <span ><strong>Valor Total: </strong><%= valorTotal %></span>
             </tbody>
+            <script>
+                
+                function listarPedido()
+                {
+                    var lista = document.getElementById("selecionar-pedido");
+                    var id = lista.options[lista.selectedIndex].value;
+                    window.location.href = "Listar?pedido="+id;
+                }
+            </script>
     </body>
 </html>
